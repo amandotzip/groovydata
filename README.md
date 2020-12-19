@@ -10,11 +10,11 @@ By Amanuel Awoke, Ferzam Mohammad, and Josue Velasquez
 
 # Introduction
 ## Motivation
-The music industry has changed a lot in the last decade with the introduction of streaming services like Apple Music or Spotify. Services like Spotify allow users to livestream music for personal consumption, often for free or for a subscription fee. These services have made it easier to consume music and have increased opportunities for people to start producing music, but they have also changed how musicians make money. Whenever a user listens to a song on a streaming service, the service typically keeps track of the number of “streams” that song has. Music artists are then paid a small amount based on the number of streams they have accumulated for their music. Given how little these artists are paid from streaming services, maximizing the amount of revenue made from a song is valuable for those looking to push out music to these services. Play count also indicates where a song stands in the streaming services’ popularity lists, and making it onto their top 100 or 200 songs is a factor considered in whether these songs are added to global, official top songs charts i.e. Billboard 200.
+The music industry has changed a lot in the last decade with the introduction of streaming services like Apple Music or Spotify. Services like Spotify allow users to livestream music for personal consumption, often for free or for a subscription fee. These services have made it easier to consume music and have increased opportunities for people to start producing music, but they have also changed how musicians make money. Whenever a user listens to a song on a streaming service, the service typically keeps track of the number of “streams” that song has. Music artists are then paid a small amount based on the number of streams they have accumulated for their music. Given how little these artists are paid from streaming services, maximizing the amount of revenue made from a song is valuable for those looking to push out music to these services. Stream count also indicates where a song stands in the streaming services’ popularity lists, and making it onto their top 100 or 200 songs is a factor considered in whether these songs are added to global, official top songs charts i.e. Billboard 200.
  
-Our group thought it would be interesting to see if we could try to make predictions for how popular a song might be given different features for a song (e.g. the genre of the song, how fast or slow it is, the key the song is written in, the time of year a song was released, how many listeners an artist already gets on average, etc.). If we can indicate how many plays a song will get, we can give a prediction for how much money a song will make on a streaming service. Much like the Moneyball scenario, it’s possible that artists are focusing on producing music that meets criteria which they think makes a song popular when, in reality, they should be focusing on other aspects of their music. Understanding what components of a song make it popular would help artists figure out the best way to produce music in order to make money off of these streaming services.
+Our group thought it would be interesting to see if we could try to make predictions for how popular a song might be given different features for a song (e.g. how fast or slow a song is, the mood of the song, how many listeners an artist already gets on average, etc.). If we can indicate how many plays a song will get, we can give a prediction for how much money a song will make on a streaming service. Much like the Moneyball scenario, it’s possible that artists are focusing on producing music that meets criteria which they think makes a song popular when, in reality, they should be focusing on other aspects of their music. Understanding what components of a song make it popular would help artists figure out the best way to produce music in order to make money off of these streaming services.
 
-The Moneyball story demonstrated the importance of data science in producing a strong baseball team, and while music is different from sports, our project should hopefully reflect similar data science practices in order to reach a valuable conclusion. It may be relatively straightforward to look at aspects like which properties make the most money or whether a song by Taylor Swift will end up on the top 200 chart given her “incredibly loyal fanbase” of over 40 million people, but maybe there are other similarities between popular songs that could indicate factors which help make a song more popular. Data science practices help us here by giving us tools to help identify characteristics in a song, clarify how those characteristics might relate to stream count, and may give insight on what areas should be focused on when producing music.
+The Moneyball story demonstrated the importance of data science in producing a strong baseball team, and while music is different from sports, our project should hopefully reflect similar data science practices in order to reach a valuable conclusion. It may be relatively straightforward to conlcude whether a song by Taylor Swift will end up on the top 200 chart given her “incredibly loyal fanbase” of over 40 million people, but maybe there are other characteristics between popular songs that could indicate factors which help make a song more popular. Data science practices help us here by giving us tools to help identify characteristics in a song, clarify how those characteristics might relate to stream count, and determine whether any elements should be focused on when producing music.
 
 From this point forward when we use the word "track" it is synonymous with "song."
 
@@ -26,7 +26,7 @@ We are defining the success of a track by its appearance on the Top 200, as well
 
 # Collect Data
 
-This is the first step in the data lifecycle where we must identify information to web scrape. We gather data from the [Spotify Charts Regional Top 200](https://spotifycharts.com/regional) to first identify which songs had the highest stream counts in the United States, dating back to January 1st 2017, to current day. Spotify Charts provides tracks with the highest stream count, their top 200 rank, and the artist(s) who created that song. Spotify Charts already compiles the data into Excel tables, so it isn't necessary to directly scrape from the website. If you wanted to download one yourself, at the top right of the website, select a date you'd like to download in the dropdown, then select further up "Download to CSV." The pandas method read_csv() was used to process the Excel files into dataframes.
+This is the first step in the data science lifecycle where we must identify and gather information. We gather data from the [Spotify Charts Regional Top 200](https://spotifycharts.com/regional) to first identify which songs had the highest stream counts in the United States, dating back to January 1st, 2017 through December 1st, 2017. Spotify Charts provides tracks with the highest stream count, their top 200 rank, and the artist(s) who created that song. Spotify Charts already compiles the data into Excel tables, so it isn't necessary to directly scrape from the website. If you wanted to download one yourself, at the top right of the website, select a date you'd like to download in the dropdown, then select further up "Download to CSV." The pandas method read_csv() was used to process the Excel files into dataframes.
 
 
 
@@ -42,7 +42,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 ```
 
-Since there were consistent download URLs of Excel sheets in relation to the date they recorded, we used a looped to retreive the links then later download all sheets.
+Since there were consistent download URLs of Excel sheets in relation to the date they recorded, we used a loop to retreive the links then later download all sheets.
 
 
 ```python
@@ -59,24 +59,9 @@ for year in range(2017, 2018):
         endingMonth = 10
         
     for month in range (1, endingMonth + 1):
-       
-        dayCount = -1
-
-        #gets proper day count per month
-        thirtyDayCountMonths = [4, 6, 9, 11]
-        if month == 2:
-            dayCount = 29
-        elif month in thirtyDayCountMonths:
-            dayCount = 30
-        else:
-            dayCount = 31
 
         if int(month) < 10:
             month = "0" + str(month)
-        #Get days if we want it
-        # for day in range (1, daycount + 1):           
-        #   if int(day) < 10:
-        #     day = "0" + str(day)
 
         date = str(year) + "-" + str(month) + "-" + "01" + "/download"
         date = ref_str + date
@@ -145,7 +130,7 @@ df['streams'] = df['streams'].astype(int) #streams are a string of a num, must w
     Done
     
 
-## Wrangled data into dataframe
+## Wrangling data into dataframe
 
 
 ```python
@@ -302,7 +287,7 @@ df
 
 # Data Processing
 
-[Spotipy](https://spotipy.readthedocs.io/en/2.16.1/#) is a lightweight Python library for the [Spotify Web API](https://developer.spotify.com/documentation/web-api/) used to retrieve more detailed data for tracks now that their names have been retrieved from the Spotify Top 200. We must first authenticate our usage of the API.
+[Spotipy](https://spotipy.readthedocs.io/en/2.16.1/#) is a lightweight Python library for the [Spotify Web API](https://developer.spotify.com/documentation/web-api/) used to retrieve more detailed data for tracks now that their names have been retrieved from the Spotify Top 200. We must first authenticate our usage of the API using a Spotify Account.
 
 
 ```python
@@ -313,7 +298,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 SPOTIPY_CLIENT_ID="ea1a162fbc6f413990542b76ab82a168"
 SPOTIPY_CLIENT_SECRET="a09882042ce54f158fdd2b6baaf2b26d"
-SPOTIPY_CLIENT_REDIRECT="http://www.cs.umd.edu/class/fall2020/cmsc320-0201/"
+SPOTIPY_CLIENT_REDIRECT="https://amanuelawoke.com/groovydata/"
 
 scope = "user-library-read"
 
@@ -324,7 +309,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CL
 
 We're going to start by using the Spotify API to get more information about all the tracks we found in the top 200's chart for the timeframe we described above. The Spotify API gives us the ability to get "audio features" from a song given a track id that Spotify creates for every song. These "audio features" include characteristics like loudness, positivity, danceability, how energetic the song is, the speed of the song, and a couple other similar characteristics that have been determined by Spotify using their own machine learning algorithms.
 
-First, we do need to get an id for every song and artist in our dataframe to be able to make queries through the Spotify API for a specific track or artist. Here, we get track and artist ids, and we also make a query for the audio features of each track id. We're doing these together for code efficiency, just because a large number of queries through the Spotify API can take time. For testing we cached the dataframe rather than compiling the data every time.
+First, we do need to get an id for every song and artist in our dataframe to be able to make queries through the Spotify API for a specific track or artist. Here, we get track and artist ids, and we also make a query for the audio features of each track id. We're doing these all together for code efficiency, just because a large number of queries through the Spotify API can take time. For testing we cached the dataframe rather than compiling the data every time.
 
 
 ```python
@@ -336,11 +321,6 @@ track_id_list = []
 popularity_index_list = []
 follower_count_list = []
 audio_features_df = pd.DataFrame()
-
-genre_list = []
-genre_filter = ["rap", "pop", "edm", "rock", "other"]
-
-
 
 #if cached df exists dont search again, else search again
 if not os.path.exists("cached_df.xlsx"):
@@ -368,22 +348,11 @@ if not os.path.exists("cached_df.xlsx"):
 
     
                 artist_object_real = sp.artist(artist_id)
-                # print(artist_object_real)
                 followers_object = artist_object_real['followers']
                 followers_value = followers_object['total']
                 follower_count_list.append(followers_value)
                 popularity_value = artist_object_real['popularity']
                 popularity_index_list.append(popularity_value)
-
-                # if artist_object_real['genres']
-                    # genre_value = "Rap"
-                # genre_list.append(genre_value)
-                # print(genre_list)
-
-
-
-                # print(popularity_index_list)
-
 
             # If our query returned nothing then append a nan in the place of artist and track for this entry
             else:
@@ -393,7 +362,6 @@ if not os.path.exists("cached_df.xlsx"):
                 popularity_index_list.append(np.nan)
                 follower_count_list.append(np.nan)
 
-                genre_list.append(np.nan)
         # If we had stored a nan, then just plan to append a nan in this position
         else:
             artist_id_list.append(np.nan)
@@ -401,9 +369,6 @@ if not os.path.exists("cached_df.xlsx"):
             
             popularity_index_list.append(np.nan)
             follower_count_list.append(np.nan)
-
-            genre_list.append(np.nan)
-
        
         #Defining audio features as nan to begin    
         audiofeatures = {'duration_ms' : np.nan, 'key' : np.nan, 'mode' : np.nan, 'time_signature' : np.nan, 'acousticness' : np.nan, 'danceability' : np.nan, 'energy' : np.nan, 'instrumentalness' : np.nan, 'liveness' : np.nan, 'loudness' : np.nan, 'speechiness' : np.nan, 'valence' : np.nan, 'tempo' : np.nan, 'id' : np.nan, 'uri' : np.nan, 'track_href' : np.nan, 'analysis_url' : np.nan, 'type' : np.nan, }
@@ -418,8 +383,6 @@ if not os.path.exists("cached_df.xlsx"):
     audio_features_df['artist_id'] = artist_id_list 
     audio_features_df['popularity_index'] = popularity_index_list
     audio_features_df['follower_count'] = follower_count_list
-
-    # audio_features_df['genre'] = genre_list
 
     # Store the created data frame into the cache
     writer = pd.ExcelWriter('cached_df.xlsx', engine='openpyxl')
@@ -773,6 +736,7 @@ df['artist_id'] = audio_features_df['artist_id']
 df['popularity_index'] = audio_features_df['popularity_index']
 df['follower_count'] = audio_features_df['follower_count']
 
+df = df.drop(columns='index')
 df
 ```
 
@@ -797,7 +761,6 @@ df
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -807,7 +770,7 @@ df
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -824,7 +787,6 @@ df
     <tr>
       <th>0</th>
       <td>1</td>
-      <td>1</td>
       <td>Starboy</td>
       <td>The Weeknd</td>
       <td>3135625</td>
@@ -833,7 +795,7 @@ df
       <td>7MXVkk9YMctZqd1Srtv4MB</td>
       <td>230453.0</td>
       <td>0.14100</td>
-      <td>...</td>
+      <td>0.679</td>
       <td>0.587</td>
       <td>0.000006</td>
       <td>0.137</td>
@@ -848,7 +810,6 @@ df
     <tr>
       <th>1</th>
       <td>2</td>
-      <td>2</td>
       <td>Closer</td>
       <td>The Chainsmokers</td>
       <td>3015525</td>
@@ -857,7 +818,7 @@ df
       <td>7BKLCZ1jbUBVqRi2FVlTVw</td>
       <td>244960.0</td>
       <td>0.41400</td>
-      <td>...</td>
+      <td>0.748</td>
       <td>0.524</td>
       <td>0.000000</td>
       <td>0.111</td>
@@ -872,7 +833,6 @@ df
     <tr>
       <th>2</th>
       <td>3</td>
-      <td>3</td>
       <td>Let Me Love You</td>
       <td>DJ Snake</td>
       <td>2545384</td>
@@ -881,7 +841,7 @@ df
       <td>3ibKnFDaa3GhpPGlOUj7ff</td>
       <td>256733.0</td>
       <td>0.23500</td>
-      <td>...</td>
+      <td>0.656</td>
       <td>0.578</td>
       <td>0.000000</td>
       <td>0.118</td>
@@ -896,7 +856,6 @@ df
     <tr>
       <th>3</th>
       <td>4</td>
-      <td>4</td>
       <td>Rockabye (feat. Sean Paul &amp; Anne-Marie)</td>
       <td>Clean Bandit</td>
       <td>2356604</td>
@@ -905,7 +864,7 @@ df
       <td>5knuzwU65gJK7IF5yJsuaW</td>
       <td>251088.0</td>
       <td>0.40600</td>
-      <td>...</td>
+      <td>0.720</td>
       <td>0.763</td>
       <td>0.000000</td>
       <td>0.180</td>
@@ -920,7 +879,6 @@ df
     <tr>
       <th>4</th>
       <td>5</td>
-      <td>5</td>
       <td>One Dance</td>
       <td>Drake</td>
       <td>2259887</td>
@@ -929,7 +887,7 @@ df
       <td>1zi7xx7UVEFkmKfv06H8x0</td>
       <td>173987.0</td>
       <td>0.00776</td>
-      <td>...</td>
+      <td>0.792</td>
       <td>0.625</td>
       <td>0.001800</td>
       <td>0.329</td>
@@ -963,11 +921,9 @@ df
       <td>...</td>
       <td>...</td>
       <td>...</td>
-      <td>...</td>
     </tr>
     <tr>
       <th>2395</th>
-      <td>196</td>
       <td>196</td>
       <td>Rockabye (feat. Sean Paul &amp; Anne-Marie)</td>
       <td>Clean Bandit</td>
@@ -977,7 +933,7 @@ df
       <td>5knuzwU65gJK7IF5yJsuaW</td>
       <td>251088.0</td>
       <td>0.40600</td>
-      <td>...</td>
+      <td>0.720</td>
       <td>0.763</td>
       <td>0.000000</td>
       <td>0.180</td>
@@ -992,7 +948,6 @@ df
     <tr>
       <th>2396</th>
       <td>197</td>
-      <td>197</td>
       <td>Rake It Up (feat. Nicki Minaj)</td>
       <td>Yo Gotti</td>
       <td>551576</td>
@@ -1001,7 +956,7 @@ df
       <td>4knL4iPxPOZjQzTUlELGSY</td>
       <td>276333.0</td>
       <td>0.02200</td>
-      <td>...</td>
+      <td>0.910</td>
       <td>0.444</td>
       <td>0.000000</td>
       <td>0.137</td>
@@ -1016,7 +971,6 @@ df
     <tr>
       <th>2397</th>
       <td>198</td>
-      <td>198</td>
       <td>New Freezer (feat. Kendrick Lamar)</td>
       <td>Rich The Kid</td>
       <td>550167</td>
@@ -1025,7 +979,7 @@ df
       <td>2EgB4n6XyBsuNUbuarr4eG</td>
       <td>191938.0</td>
       <td>0.04050</td>
-      <td>...</td>
+      <td>0.884</td>
       <td>0.698</td>
       <td>0.000000</td>
       <td>0.195</td>
@@ -1040,7 +994,6 @@ df
     <tr>
       <th>2398</th>
       <td>199</td>
-      <td>199</td>
       <td>All Night</td>
       <td>Steve Aoki</td>
       <td>548039</td>
@@ -1049,7 +1002,7 @@ df
       <td>0dXNQ8dckG4eYfEtq9zcva</td>
       <td>197640.0</td>
       <td>0.00410</td>
-      <td>...</td>
+      <td>0.538</td>
       <td>0.804</td>
       <td>0.000000</td>
       <td>0.330</td>
@@ -1064,7 +1017,6 @@ df
     <tr>
       <th>2399</th>
       <td>200</td>
-      <td>200</td>
       <td>113</td>
       <td>Booba</td>
       <td>546878</td>
@@ -1073,7 +1025,7 @@ df
       <td>0leVyLipY7A8ruhkIBqc0E</td>
       <td>266672.0</td>
       <td>0.00805</td>
-      <td>...</td>
+      <td>0.740</td>
       <td>0.510</td>
       <td>0.000375</td>
       <td>0.128</td>
@@ -1087,7 +1039,7 @@ df
     </tr>
   </tbody>
 </table>
-<p>2400 rows × 21 columns</p>
+<p>2400 rows × 20 columns</p>
 </div>
 
 
@@ -1099,7 +1051,7 @@ df['streams'] = df['streams'].astype(float)
 df['position'] = df['position'].astype(int)
 ```
 
-# Data Visualization
+# Data Visualization and Analysis
 
 ### Song Properties
 We've now gathered and manipulated valuable data for each track for each day recorded. The key elements are the following:
@@ -1144,30 +1096,28 @@ First we observe that there is a standard distrubtion of stream counts, meaning 
 
 ```python
 #Histogram takes 100 random tracks, takes the average of all their streams, then does this 100 times
-#Is a standarrd deviation
-
 
 from scipy.stats import normaltest
 from numpy.random import seed
 from numpy.random import randn
 
-
 alpha = 0.05
 data = []
 for i in range(0,100):
-    data.append(np.mean(df['streams'].sample(n=100)))
+    data.append(np.mean(df['streams'].sample(n=500)))
 plt.hist(data)
-plt.xlabel("Estimate")
+plt.title("Frequency Distribution of Streams")
+plt.xlabel("Sample Mean")
 plt.ylabel("Frequency")
-
+print("Population mean: ", df['streams'].mean())
+print("Population median: ", df['streams'].median())
+print("Population STDDEV: ", df['streams'].std())
 ```
 
-
-
-
-    Text(0, 0.5, 'Frequency')
-
-
+    Population mean:  1023582.30625
+    Population median:  719465.0
+    Population STDDEV:  804478.6072499221
+    
 
 
     
@@ -1209,7 +1159,6 @@ no_dupes_df
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -1219,7 +1168,7 @@ no_dupes_df
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -1236,7 +1185,6 @@ no_dupes_df
     <tr>
       <th>200</th>
       <td>1</td>
-      <td>1</td>
       <td>Shape of You</td>
       <td>Ed Sheeran</td>
       <td>7549041.0</td>
@@ -1245,7 +1193,7 @@ no_dupes_df
       <td>7qiZfU4dY1lWllzX7mPBI3</td>
       <td>233713.0</td>
       <td>0.5810</td>
-      <td>...</td>
+      <td>0.825</td>
       <td>0.652</td>
       <td>0.000000</td>
       <td>0.0931</td>
@@ -1260,7 +1208,6 @@ no_dupes_df
     <tr>
       <th>1000</th>
       <td>1</td>
-      <td>1</td>
       <td>Despacito - Remix</td>
       <td>Luis Fonsi</td>
       <td>7332260.0</td>
@@ -1269,7 +1216,7 @@ no_dupes_df
       <td>6rPO02ozF3bM7NnOV4h6s2</td>
       <td>228827.0</td>
       <td>0.2280</td>
-      <td>...</td>
+      <td>0.653</td>
       <td>0.816</td>
       <td>0.000000</td>
       <td>0.0967</td>
@@ -1284,7 +1231,6 @@ no_dupes_df
     <tr>
       <th>2000</th>
       <td>1</td>
-      <td>1</td>
       <td>rockstar</td>
       <td>Post Malone</td>
       <td>5755610.0</td>
@@ -1293,7 +1239,7 @@ no_dupes_df
       <td>7ytR5pFWmSjzHJIeQkgog4</td>
       <td>181733.0</td>
       <td>0.2470</td>
-      <td>...</td>
+      <td>0.746</td>
       <td>0.690</td>
       <td>0.000000</td>
       <td>0.1010</td>
@@ -1308,7 +1254,6 @@ no_dupes_df
     <tr>
       <th>1600</th>
       <td>1</td>
-      <td>1</td>
       <td>Look What You Made Me Do</td>
       <td>Taylor Swift</td>
       <td>5547962.0</td>
@@ -1317,7 +1262,7 @@ no_dupes_df
       <td>1P17dC1amhFzptugyAO7Il</td>
       <td>211853.0</td>
       <td>0.2040</td>
-      <td>...</td>
+      <td>0.766</td>
       <td>0.709</td>
       <td>0.000014</td>
       <td>0.1260</td>
@@ -1332,7 +1277,6 @@ no_dupes_df
     <tr>
       <th>1001</th>
       <td>2</td>
-      <td>2</td>
       <td>I'm the One</td>
       <td>DJ Khaled</td>
       <td>5208996.0</td>
@@ -1341,7 +1285,7 @@ no_dupes_df
       <td>1jYiIOC5d6soxkJP81fxq2</td>
       <td>288877.0</td>
       <td>0.0533</td>
-      <td>...</td>
+      <td>0.599</td>
       <td>0.667</td>
       <td>0.000000</td>
       <td>0.1340</td>
@@ -1375,11 +1319,9 @@ no_dupes_df
       <td>...</td>
       <td>...</td>
       <td>...</td>
-      <td>...</td>
     </tr>
     <tr>
       <th>193</th>
-      <td>194</td>
       <td>194</td>
       <td>Famous</td>
       <td>Kanye West</td>
@@ -1389,7 +1331,7 @@ no_dupes_df
       <td>19a3JfW8BQwqHWUMbcqSx8</td>
       <td>196040.0</td>
       <td>0.0711</td>
-      <td>...</td>
+      <td>0.465</td>
       <td>0.735</td>
       <td>0.000000</td>
       <td>0.0975</td>
@@ -1404,7 +1346,6 @@ no_dupes_df
     <tr>
       <th>196</th>
       <td>197</td>
-      <td>197</td>
       <td>Oh Lord</td>
       <td>MiC LOWRY</td>
       <td>331792.0</td>
@@ -1413,7 +1354,7 @@ no_dupes_df
       <td>1ISsiC4Fw6f96kZQegLGiJ</td>
       <td>198253.0</td>
       <td>0.4070</td>
-      <td>...</td>
+      <td>0.493</td>
       <td>0.738</td>
       <td>0.000000</td>
       <td>0.1300</td>
@@ -1428,7 +1369,6 @@ no_dupes_df
     <tr>
       <th>197</th>
       <td>198</td>
-      <td>198</td>
       <td>Superstition - Single Version</td>
       <td>Stevie Wonder</td>
       <td>331376.0</td>
@@ -1437,7 +1377,7 @@ no_dupes_df
       <td>1h2xVEoJORqrg71HocgqXd</td>
       <td>245493.0</td>
       <td>0.0380</td>
-      <td>...</td>
+      <td>0.633</td>
       <td>0.634</td>
       <td>0.006400</td>
       <td>0.0385</td>
@@ -1452,7 +1392,6 @@ no_dupes_df
     <tr>
       <th>198</th>
       <td>199</td>
-      <td>199</td>
       <td>Secrets</td>
       <td>The Weeknd</td>
       <td>331233.0</td>
@@ -1461,7 +1400,7 @@ no_dupes_df
       <td>1NhPKVLsHhFUHIOZ32QnS2</td>
       <td>224693.0</td>
       <td>0.0717</td>
-      <td>...</td>
+      <td>0.516</td>
       <td>0.764</td>
       <td>0.000000</td>
       <td>0.1150</td>
@@ -1476,7 +1415,6 @@ no_dupes_df
     <tr>
       <th>199</th>
       <td>200</td>
-      <td>200</td>
       <td>Ni**as In Paris</td>
       <td>JAY-Z</td>
       <td>325951.0</td>
@@ -1485,7 +1423,7 @@ no_dupes_df
       <td>4Li2WHPkuyCdtmokzW2007</td>
       <td>219333.0</td>
       <td>0.1270</td>
-      <td>...</td>
+      <td>0.789</td>
       <td>0.858</td>
       <td>0.000000</td>
       <td>0.3490</td>
@@ -1499,7 +1437,7 @@ no_dupes_df
     </tr>
   </tbody>
 </table>
-<p>657 rows × 21 columns</p>
+<p>657 rows × 20 columns</p>
 </div>
 
 
@@ -1512,15 +1450,15 @@ plt.scatter(no_dupes_df['popularity_index'], no_dupes_df['streams'])
 plt.title('Streams in Relation to Popularity')
 plt.xlabel('popularity value')
 plt.ylabel('streams in millions')
-
+print("Mean of popularity index: " + str(no_dupes_df['popularity_index'].mean()))
+print("Median of popularity index: " + str(no_dupes_df['popularity_index'].median()))
+print("STDDEV of popularity index: " + str(no_dupes_df['popularity_index'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of popularity index: 81.84579439252336
+    Median of popularity index: 83.0
+    STDDEV of popularity index: 10.20413589979866
+    
 
 
     
@@ -1528,39 +1466,23 @@ plt.ylabel('streams in millions')
     
 
 
+The data appears to cluster around the mean, so we decided to check whether the popularity index was normally distributed
+
 
 ```python
-plt.scatter(no_dupes_df['follower_count'], no_dupes_df['streams'])
-plt.title('Streams in Relation to Follower Count')
-plt.xlabel('number of artist followers')
-plt.ylabel('streams in millions')
+data = []
+for i in range(0,100):
+    data.append(np.mean(df['popularity_index'].sample(n=1000)))
+plt.hist(data)
+plt.title("Frequency Distribution of Popularity Indices")
+plt.xlabel("Sample Mean")
+plt.ylabel("Frequency")
 ```
 
 
 
 
-    Text(0, 0.5, 'streams in millions')
-
-
-
-
-    
-![svg](output_26_1.svg)
-    
-
-
-
-```python
-plt.scatter(no_dupes_df['duration_ms'], no_dupes_df['streams'])
-plt.title('Streams in Relation to Song Duration')
-plt.xlabel('duration in milliseconds')
-plt.ylabel('streams in millions')
-```
-
-
-
-
-    Text(0, 0.5, 'streams in millions')
+    Text(0, 0.5, 'Frequency')
 
 
 
@@ -1570,41 +1492,23 @@ plt.ylabel('streams in millions')
     
 
 
-
-```python
-plt.scatter(no_dupes_df['acousticness'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Acousticness')
-plt.xlabel('acousticness scale of 0-1')
-plt.ylabel('streams in millions')
-```
-
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
-
-
-    
-![svg](output_28_1.svg)
-    
-
+Data related to popularity index of an artist does appear to be normally distributed from our data depending on the sample, and it appears that the majority of songs on the top 200 come from artists with a popularity of around 80.
 
 
 ```python
-plt.scatter(no_dupes_df['danceability'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Danceability')
-plt.xlabel('danceability scale of 0-1')
+plt.scatter(no_dupes_df['follower_count'], no_dupes_df['streams'])
+plt.title('Streams in Relation to Follower Count')
+plt.xlabel('number of artist followers in tens of million')
 plt.ylabel('streams in millions')
+print("Mean of follower count: " + str(no_dupes_df['follower_count'].mean()))
+print("Median of follower count: " + str(no_dupes_df['follower_count'].median()))
+print("STDDEV of follower count: " + str(no_dupes_df['follower_count'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of follower count: 13744629.682242991
+    Median of follower count: 7748023.0
+    STDDEV of follower count: 16091903.457271803
+    
 
 
     
@@ -1614,18 +1518,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['energy'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Energy')
-plt.xlabel('energy scale of 0-1')
+plt.scatter(no_dupes_df['duration_ms'], no_dupes_df['streams'])
+plt.title('Streams in Relation to Song Duration')
+plt.xlabel('duration in milliseconds')
 plt.ylabel('streams in millions')
+print("Mean of song length in seconds: " + str(no_dupes_df['duration_ms'].mean() / 1000))
+print("Median of song length in seconds: " + str(no_dupes_df['duration_ms'].median() / 1000))
+print("STDDEV of song length in seconds: " + str(no_dupes_df['duration_ms'].std() / 1000))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of song length in seconds: 215.89356386292835
+    Median of song length in seconds: 213.981
+    STDDEV of song length in seconds: 41.844669610266095
+    
 
 
     
@@ -1635,18 +1540,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['instrumentalness'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Instrumentalness')
-plt.xlabel('instrumentalness scale of 0-1')
+plt.scatter(no_dupes_df['acousticness'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Acousticness')
+plt.xlabel('acousticness scale of 0-1')
 plt.ylabel('streams in millions')
+print("Mean of acousticness index: " + str(no_dupes_df['acousticness'].mean()))
+print("Median of acousticness index: " + str(no_dupes_df['acousticness'].median()))
+print("STDDEV of acousticness index: " + str(no_dupes_df['acousticness'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of acousticness index: 0.21230590903426794
+    Median of acousticness index: 0.11
+    STDDEV of acousticness index: 0.23844285456931844
+    
 
 
     
@@ -1656,18 +1562,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['liveness'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Liveness')
-plt.xlabel('liveness scale of 0-1') 
+plt.scatter(no_dupes_df['danceability'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Danceability')
+plt.xlabel('danceability scale of 0-1')
 plt.ylabel('streams in millions')
+print("Mean of danceability index: " + str(no_dupes_df['danceability'].mean()))
+print("Median of danceability index: " + str(no_dupes_df['danceability'].median()))
+print("STDDEV of danceability index: " + str(no_dupes_df['danceability'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of danceability index: 0.6818423676012461
+    Median of danceability index: 0.695
+    STDDEV of danceability index: 0.13576219623892008
+    
 
 
     
@@ -1677,18 +1584,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['loudness'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Loudness')
-plt.xlabel('loudness scale')
+plt.scatter(no_dupes_df['energy'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Energy')
+plt.xlabel('energy scale of 0-1')
 plt.ylabel('streams in millions')
+print("Mean of energy index: " + str(no_dupes_df['energy'].mean()))
+print("Median of energy index: " + str(no_dupes_df['energy'].median()))
+print("STDDEV of energy index: " + str(no_dupes_df['energy'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of energy index: 0.6355397507788161
+    Median of energy index: 0.6515
+    STDDEV of energy index: 0.17854747086125813
+    
 
 
     
@@ -1698,18 +1606,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['speechiness'], no_dupes_df['streams'])
-plt.title('Streams in Relation to Speechiness')
-plt.xlabel('speechiness scale of 0-.5')
+plt.scatter(no_dupes_df['instrumentalness'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Instrumentalness')
+plt.xlabel('instrumentalness scale of 0-1')
 plt.ylabel('streams in millions')
+print("Mean of instrumentalness index: " + str(no_dupes_df['instrumentalness'].mean()))
+print("Median of instrumentalness index: " + str(no_dupes_df['instrumentalness'].median()))
+print("STDDEV of instrumentalness index: " + str(no_dupes_df['instrumentalness'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of instrumentalness index: 0.013712031915887851
+    Median of instrumentalness index: 0.0
+    STDDEV of instrumentalness index: 0.08112995046942596
+    
 
 
     
@@ -1719,18 +1628,19 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['valence'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Valence')
-plt.xlabel('valence scale of 0-1')
+plt.scatter(no_dupes_df['liveness'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Liveness')
+plt.xlabel('liveness scale of 0-1') 
 plt.ylabel('streams in millions')
+print("Mean of liveness index: " + str(no_dupes_df['liveness'].mean()))
+print("Median of liveness index: " + str(no_dupes_df['liveness'].median()))
+print("STDDEV of liveness index: " + str(no_dupes_df['liveness'].std()))
 ```
 
-
-
-
-    Text(0, 0.5, 'streams in millions')
-
-
+    Mean of liveness index: 0.1735563862928349
+    Median of liveness index: 0.123
+    STDDEV of liveness index: 0.12771847354589183
+    
 
 
     
@@ -1740,22 +1650,117 @@ plt.ylabel('streams in millions')
 
 
 ```python
-plt.scatter(no_dupes_df['tempo'],no_dupes_df['streams'])
-plt.title('Streams in Relation to Tempo')
-plt.xlabel('tempo scale of 0-200')
+plt.scatter(no_dupes_df['loudness'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Loudness')
+plt.xlabel('loudness in decibels')
 plt.ylabel('streams in millions')
+print("Mean of volume: " + str(no_dupes_df['loudness'].mean()))
+print("Median of volume: " + str(no_dupes_df['loudness'].median()))
+print("STDDEV of volume: " + str(no_dupes_df['loudness'].std()))
+```
+
+    Mean of volume: -6.436602803738317
+    Median of volume: -5.992
+    STDDEV of volume: 2.930078470544615
+    
+
+
+    
+![svg](output_36_1.svg)
+    
+
+
+Lots of points appear to be around the mean volume, so let's check and see if this data is normally distributed.
+
+
+```python
+data = []
+for i in range(0,100):
+    data.append(np.mean(df['loudness'].sample(n=100)))
+plt.hist(data)
+plt.title("Frequency Distribution of Average Song Volumes")
+plt.xlabel("Sample Mean")
+plt.ylabel("Frequency")
 ```
 
 
 
 
-    Text(0, 0.5, 'streams in millions')
+    Text(0, 0.5, 'Frequency')
 
 
 
 
     
-![svg](output_36_1.svg)
+![svg](output_38_1.svg)
+    
+
+
+The spread of different averages volumes for each track appears to be normally distributed, meaning the mean of any sample should be the same as the population mean. We determined that the population mean is about ~-6 decibels, with a standard deviation of around 3 decibels. 
+
+
+```python
+plt.scatter(no_dupes_df['speechiness'], no_dupes_df['streams'])
+plt.title('Streams in Relation to Speechiness')
+plt.xlabel('speechiness scale of 0-.5')
+plt.ylabel('streams in millions')
+print("Mean of speechiness index: " + str(no_dupes_df['speechiness'].mean()))
+print("Median of speechiness index: " + str(no_dupes_df['speechiness'].median()))
+print("STDDEV of speechiness index: " + str(no_dupes_df['speechiness'].std()))
+```
+
+    Mean of speechiness index: 0.1167436137071651
+    Median of speechiness index: 0.0678
+    STDDEV of speechiness index: 0.11056578687587934
+    
+
+
+    
+![svg](output_40_1.svg)
+    
+
+
+
+```python
+plt.scatter(no_dupes_df['valence'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Valence')
+plt.xlabel('valence scale of 0-1')
+plt.ylabel('streams in millions')
+print("Mean of valence index: " + str(no_dupes_df['valence'].mean()))
+print("Median of valence index: " + str(no_dupes_df['valence'].median()))
+print("STDDEV of valence index: " + str(no_dupes_df['valence'].std()))
+```
+
+    Mean of valence index: 0.48936448598130844
+    Median of valence index: 0.48
+    STDDEV of valence index: 0.23614792618729277
+    
+
+
+    
+![svg](output_41_1.svg)
+    
+
+
+
+```python
+plt.scatter(no_dupes_df['tempo'],no_dupes_df['streams'])
+plt.title('Streams in Relation to Tempo')
+plt.xlabel('tempo scale of 0-200 beats per minute')
+plt.ylabel('streams in millions')
+print("Mean of tempo: " + str(no_dupes_df['tempo'].mean()))
+print("Median of tempo: " + str(no_dupes_df['tempo'].median()))
+print("STDDEV of tempo: " + str(no_dupes_df['tempo'].std()))
+```
+
+    Mean of tempo: 121.39503894080995
+    Median of tempo: 119.9425
+    STDDEV of tempo: 29.609868539398786
+    
+
+
+    
+![svg](output_42_1.svg)
     
 
 
@@ -1781,7 +1786,7 @@ sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
 
 
     
-![svg](output_38_1.svg)
+![svg](output_44_1.svg)
     
 
 
@@ -1829,7 +1834,6 @@ top10s.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -1839,7 +1843,7 @@ top10s.head()
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -1856,7 +1860,6 @@ top10s.head()
     <tr>
       <th>0</th>
       <td>1</td>
-      <td>1</td>
       <td>Starboy</td>
       <td>The Weeknd</td>
       <td>3135625.0</td>
@@ -1865,7 +1868,7 @@ top10s.head()
       <td>7MXVkk9YMctZqd1Srtv4MB</td>
       <td>230453.0</td>
       <td>0.14100</td>
-      <td>...</td>
+      <td>0.679</td>
       <td>0.587</td>
       <td>0.000006</td>
       <td>0.137</td>
@@ -1880,7 +1883,6 @@ top10s.head()
     <tr>
       <th>1</th>
       <td>2</td>
-      <td>2</td>
       <td>Closer</td>
       <td>The Chainsmokers</td>
       <td>3015525.0</td>
@@ -1889,7 +1891,7 @@ top10s.head()
       <td>7BKLCZ1jbUBVqRi2FVlTVw</td>
       <td>244960.0</td>
       <td>0.41400</td>
-      <td>...</td>
+      <td>0.748</td>
       <td>0.524</td>
       <td>0.000000</td>
       <td>0.111</td>
@@ -1904,7 +1906,6 @@ top10s.head()
     <tr>
       <th>2</th>
       <td>3</td>
-      <td>3</td>
       <td>Let Me Love You</td>
       <td>DJ Snake</td>
       <td>2545384.0</td>
@@ -1913,7 +1914,7 @@ top10s.head()
       <td>3ibKnFDaa3GhpPGlOUj7ff</td>
       <td>256733.0</td>
       <td>0.23500</td>
-      <td>...</td>
+      <td>0.656</td>
       <td>0.578</td>
       <td>0.000000</td>
       <td>0.118</td>
@@ -1928,7 +1929,6 @@ top10s.head()
     <tr>
       <th>3</th>
       <td>4</td>
-      <td>4</td>
       <td>Rockabye (feat. Sean Paul &amp; Anne-Marie)</td>
       <td>Clean Bandit</td>
       <td>2356604.0</td>
@@ -1937,7 +1937,7 @@ top10s.head()
       <td>5knuzwU65gJK7IF5yJsuaW</td>
       <td>251088.0</td>
       <td>0.40600</td>
-      <td>...</td>
+      <td>0.720</td>
       <td>0.763</td>
       <td>0.000000</td>
       <td>0.180</td>
@@ -1952,7 +1952,6 @@ top10s.head()
     <tr>
       <th>4</th>
       <td>5</td>
-      <td>5</td>
       <td>One Dance</td>
       <td>Drake</td>
       <td>2259887.0</td>
@@ -1961,7 +1960,7 @@ top10s.head()
       <td>1zi7xx7UVEFkmKfv06H8x0</td>
       <td>173987.0</td>
       <td>0.00776</td>
-      <td>...</td>
+      <td>0.792</td>
       <td>0.625</td>
       <td>0.001800</td>
       <td>0.329</td>
@@ -1975,7 +1974,6 @@ top10s.head()
     </tr>
   </tbody>
 </table>
-<p>5 rows × 21 columns</p>
 </div>
 
 
@@ -1984,7 +1982,7 @@ top10s.head()
 ```python
 
 plotTop10('popularity_index')
-plt.title('Top 10 Streams in Relation to Popularity')
+plt.title('Top 10 Streams in Relation to Popularity of Artist')
 plt.xlabel('Artist Popularity Value')
 plt.ylabel('streams in millions')
 plt.legend(top10_legend)
@@ -1994,13 +1992,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x2150947d400>
+    <matplotlib.legend.Legend at 0x23bdc07df10>
 
 
 
 
     
-![svg](output_42_1.svg)
+![svg](output_48_1.svg)
     
 
 
@@ -2016,15 +2014,17 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x2150948b580>
+    <matplotlib.legend.Legend at 0x23bd3a15760>
 
 
 
 
     
-![svg](output_43_1.svg)
+![svg](output_49_1.svg)
     
 
+
+This graph seems to indicate that the majority of songs within the top 10 positions come from artists with a follower count of less than 30 million, but the sample size here is small.
 
 
 ```python
@@ -2038,13 +2038,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x21509ab9040>
+    <matplotlib.legend.Legend at 0x23bd3a91af0>
 
 
 
 
     
-![svg](output_44_1.svg)
+![svg](output_51_1.svg)
     
 
 
@@ -2062,13 +2062,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x21507f43520>
+    <matplotlib.legend.Legend at 0x23bd369fac0>
 
 
 
 
     
-![svg](output_46_1.svg)
+![svg](output_53_1.svg)
     
 
 
@@ -2088,13 +2088,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x21509ea5d30>
+    <matplotlib.legend.Legend at 0x23bd3e10970>
 
 
 
 
     
-![svg](output_48_1.svg)
+![svg](output_55_1.svg)
     
 
 
@@ -2107,20 +2107,18 @@ plt.title('Top 10 Streams in Relation to Danceability')
 plt.xlabel('danceability scale of 0-1')
 plt.ylabel('streams in millions')
 plt.legend(top10_legend)
-
-
 ```
 
 
 
 
-    <matplotlib.legend.Legend at 0x2150a231880>
+    <matplotlib.legend.Legend at 0x23bdfe06d00>
 
 
 
 
     
-![svg](output_50_1.svg)
+![svg](output_57_1.svg)
     
 
 
@@ -2141,13 +2139,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x2150a411340>
+    <matplotlib.legend.Legend at 0x23bd41c5b20>
 
 
 
 
     
-![svg](output_52_1.svg)
+![svg](output_59_1.svg)
     
 
 
@@ -2155,8 +2153,8 @@ This graph describes the average volume of each track in our top 10s data set co
 
 
 ```python
-
 plotTop10('valence')
+plt.title('Top 10 Streams in Relation to Loudness')
 plt.xlabel('valence scale of 0-1')
 plt.ylabel('streams in millions')
 plt.legend(top10_legend)
@@ -2165,13 +2163,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x21509ec9400>
+    <matplotlib.legend.Legend at 0x23bdd6c9580>
 
 
 
 
     
-![svg](output_54_1.svg)
+![svg](output_61_1.svg)
     
 
 
@@ -2192,13 +2190,13 @@ plt.legend(top10_legend)
 
 
 
-    <matplotlib.legend.Legend at 0x21509777dc0>
+    <matplotlib.legend.Legend at 0x23bd35843d0>
 
 
 
 
     
-![svg](output_56_1.svg)
+![svg](output_63_1.svg)
     
 
 
@@ -2225,7 +2223,7 @@ sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
 
 
     
-![svg](output_59_1.svg)
+![svg](output_66_1.svg)
     
 
 
@@ -2262,7 +2260,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -2272,7 +2269,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -2289,7 +2286,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>200</th>
       <td>1</td>
-      <td>1</td>
       <td>Shape of You</td>
       <td>Ed Sheeran</td>
       <td>7549041.0</td>
@@ -2298,7 +2294,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7qiZfU4dY1lWllzX7mPBI3</td>
       <td>233713.0</td>
       <td>0.581</td>
-      <td>...</td>
+      <td>0.825</td>
       <td>0.652</td>
       <td>0.000000</td>
       <td>0.0931</td>
@@ -2313,7 +2309,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1000</th>
       <td>1</td>
-      <td>1</td>
       <td>Despacito - Remix</td>
       <td>Luis Fonsi</td>
       <td>7332260.0</td>
@@ -2322,7 +2317,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>6rPO02ozF3bM7NnOV4h6s2</td>
       <td>228827.0</td>
       <td>0.228</td>
-      <td>...</td>
+      <td>0.653</td>
       <td>0.816</td>
       <td>0.000000</td>
       <td>0.0967</td>
@@ -2337,7 +2332,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>400</th>
       <td>1</td>
-      <td>1</td>
       <td>Shape of You</td>
       <td>Ed Sheeran</td>
       <td>7201132.0</td>
@@ -2346,7 +2340,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7qiZfU4dY1lWllzX7mPBI3</td>
       <td>233713.0</td>
       <td>0.581</td>
-      <td>...</td>
+      <td>0.825</td>
       <td>0.652</td>
       <td>0.000000</td>
       <td>0.0931</td>
@@ -2361,7 +2355,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>600</th>
       <td>1</td>
-      <td>1</td>
       <td>Shape of You</td>
       <td>Ed Sheeran</td>
       <td>6815498.0</td>
@@ -2370,7 +2363,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7qiZfU4dY1lWllzX7mPBI3</td>
       <td>233713.0</td>
       <td>0.581</td>
-      <td>...</td>
+      <td>0.825</td>
       <td>0.652</td>
       <td>0.000000</td>
       <td>0.0931</td>
@@ -2385,7 +2378,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1200</th>
       <td>1</td>
-      <td>1</td>
       <td>Despacito - Remix</td>
       <td>Luis Fonsi</td>
       <td>6398530.0</td>
@@ -2394,7 +2386,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>6rPO02ozF3bM7NnOV4h6s2</td>
       <td>228827.0</td>
       <td>0.228</td>
-      <td>...</td>
+      <td>0.653</td>
       <td>0.816</td>
       <td>0.000000</td>
       <td>0.0967</td>
@@ -2409,7 +2401,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>800</th>
       <td>1</td>
-      <td>1</td>
       <td>Despacito - Remix</td>
       <td>Luis Fonsi</td>
       <td>6360737.0</td>
@@ -2418,7 +2409,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>6rPO02ozF3bM7NnOV4h6s2</td>
       <td>228827.0</td>
       <td>0.228</td>
-      <td>...</td>
+      <td>0.653</td>
       <td>0.816</td>
       <td>0.000000</td>
       <td>0.0967</td>
@@ -2433,7 +2424,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>2000</th>
       <td>1</td>
-      <td>1</td>
       <td>rockstar</td>
       <td>Post Malone</td>
       <td>5755610.0</td>
@@ -2442,7 +2432,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7ytR5pFWmSjzHJIeQkgog4</td>
       <td>181733.0</td>
       <td>0.247</td>
-      <td>...</td>
+      <td>0.746</td>
       <td>0.690</td>
       <td>0.000000</td>
       <td>0.1010</td>
@@ -2457,7 +2447,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1800</th>
       <td>1</td>
-      <td>1</td>
       <td>rockstar</td>
       <td>Post Malone</td>
       <td>5649503.0</td>
@@ -2466,7 +2455,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7ytR5pFWmSjzHJIeQkgog4</td>
       <td>181733.0</td>
       <td>0.247</td>
-      <td>...</td>
+      <td>0.746</td>
       <td>0.690</td>
       <td>0.000000</td>
       <td>0.1010</td>
@@ -2481,7 +2470,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1600</th>
       <td>1</td>
-      <td>1</td>
       <td>Look What You Made Me Do</td>
       <td>Taylor Swift</td>
       <td>5547962.0</td>
@@ -2490,7 +2478,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>1P17dC1amhFzptugyAO7Il</td>
       <td>211853.0</td>
       <td>0.204</td>
-      <td>...</td>
+      <td>0.766</td>
       <td>0.709</td>
       <td>0.000014</td>
       <td>0.1260</td>
@@ -2505,7 +2493,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>2200</th>
       <td>1</td>
-      <td>1</td>
       <td>rockstar</td>
       <td>Post Malone</td>
       <td>5528701.0</td>
@@ -2514,7 +2501,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7ytR5pFWmSjzHJIeQkgog4</td>
       <td>181733.0</td>
       <td>0.247</td>
-      <td>...</td>
+      <td>0.746</td>
       <td>0.690</td>
       <td>0.000000</td>
       <td>0.1010</td>
@@ -2528,7 +2515,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     </tr>
   </tbody>
 </table>
-<p>10 rows × 21 columns</p>
 </div>
 
 
@@ -2562,7 +2548,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -2572,7 +2557,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -2589,7 +2574,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>200</th>
       <td>1</td>
-      <td>1</td>
       <td>Shape of You</td>
       <td>Ed Sheeran</td>
       <td>7549041.0</td>
@@ -2598,7 +2582,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7qiZfU4dY1lWllzX7mPBI3</td>
       <td>233713.0</td>
       <td>0.581000</td>
-      <td>...</td>
+      <td>0.825</td>
       <td>0.652</td>
       <td>0.000000</td>
       <td>0.0931</td>
@@ -2613,7 +2597,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1000</th>
       <td>1</td>
-      <td>1</td>
       <td>Despacito - Remix</td>
       <td>Luis Fonsi</td>
       <td>7332260.0</td>
@@ -2622,7 +2605,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>6rPO02ozF3bM7NnOV4h6s2</td>
       <td>228827.0</td>
       <td>0.228000</td>
-      <td>...</td>
+      <td>0.653</td>
       <td>0.816</td>
       <td>0.000000</td>
       <td>0.0967</td>
@@ -2637,7 +2620,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>2000</th>
       <td>1</td>
-      <td>1</td>
       <td>rockstar</td>
       <td>Post Malone</td>
       <td>5755610.0</td>
@@ -2646,7 +2628,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7ytR5pFWmSjzHJIeQkgog4</td>
       <td>181733.0</td>
       <td>0.247000</td>
-      <td>...</td>
+      <td>0.746</td>
       <td>0.690</td>
       <td>0.000000</td>
       <td>0.1010</td>
@@ -2661,7 +2643,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1600</th>
       <td>1</td>
-      <td>1</td>
       <td>Look What You Made Me Do</td>
       <td>Taylor Swift</td>
       <td>5547962.0</td>
@@ -2670,7 +2651,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>1P17dC1amhFzptugyAO7Il</td>
       <td>211853.0</td>
       <td>0.204000</td>
-      <td>...</td>
+      <td>0.766</td>
       <td>0.709</td>
       <td>0.000014</td>
       <td>0.1260</td>
@@ -2685,7 +2666,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1001</th>
       <td>2</td>
-      <td>2</td>
       <td>I'm the One</td>
       <td>DJ Khaled</td>
       <td>5208996.0</td>
@@ -2694,7 +2674,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>1jYiIOC5d6soxkJP81fxq2</td>
       <td>288877.0</td>
       <td>0.053300</td>
-      <td>...</td>
+      <td>0.599</td>
       <td>0.667</td>
       <td>0.000000</td>
       <td>0.1340</td>
@@ -2709,7 +2689,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>401</th>
       <td>2</td>
-      <td>2</td>
       <td>Something Just Like This</td>
       <td>The Chainsmokers</td>
       <td>4581789.0</td>
@@ -2718,7 +2697,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>6RUKPb4LETWmmr3iAEQktW</td>
       <td>247160.0</td>
       <td>0.049800</td>
-      <td>...</td>
+      <td>0.617</td>
       <td>0.635</td>
       <td>0.000014</td>
       <td>0.1640</td>
@@ -2733,7 +2712,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>1201</th>
       <td>2</td>
-      <td>2</td>
       <td>Wild Thoughts (feat. Rihanna &amp; Bryson Tiller)</td>
       <td>DJ Khaled</td>
       <td>4558126.0</td>
@@ -2742,7 +2720,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>45XhKYRRkyeqoW3teSOkCM</td>
       <td>204664.0</td>
       <td>0.028700</td>
-      <td>...</td>
+      <td>0.613</td>
       <td>0.681</td>
       <td>0.000000</td>
       <td>0.1260</td>
@@ -2757,7 +2735,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>402</th>
       <td>3</td>
-      <td>3</td>
       <td>It Ain't Me (with Selena Gomez)</td>
       <td>Kygo</td>
       <td>4529714.0</td>
@@ -2766,7 +2743,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>2jRGYG8U5bJzWOH6FLuzvO</td>
       <td>192000.0</td>
       <td>0.016100</td>
-      <td>...</td>
+      <td>0.713</td>
       <td>0.658</td>
       <td>0.000138</td>
       <td>0.0607</td>
@@ -2781,7 +2758,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>803</th>
       <td>4</td>
-      <td>4</td>
       <td>HUMBLE.</td>
       <td>Kendrick Lamar</td>
       <td>4371886.0</td>
@@ -2790,7 +2766,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>7KXjTSCq5nL1LoYtL7XAwS</td>
       <td>177000.0</td>
       <td>0.000282</td>
-      <td>...</td>
+      <td>0.908</td>
       <td>0.621</td>
       <td>0.000054</td>
       <td>0.0958</td>
@@ -2805,7 +2781,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     <tr>
       <th>2002</th>
       <td>3</td>
-      <td>3</td>
       <td>New Rules</td>
       <td>Dua Lipa</td>
       <td>3758506.0</td>
@@ -2814,7 +2789,7 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
       <td>2ekn2ttSfGqwhhate0LSR0</td>
       <td>209320.0</td>
       <td>0.002610</td>
-      <td>...</td>
+      <td>0.762</td>
       <td>0.700</td>
       <td>0.000016</td>
       <td>0.1530</td>
@@ -2828,7 +2803,6 @@ highValenceTracks.sort_values('streams', ascending=False).head(10)
     </tr>
   </tbody>
 </table>
-<p>10 rows × 21 columns</p>
 </div>
 
 
@@ -2862,7 +2836,6 @@ highValenceTracks.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>index</th>
       <th>position</th>
       <th>track_name</th>
       <th>artist</th>
@@ -2872,7 +2845,7 @@ highValenceTracks.head()
       <th>track_id</th>
       <th>duration_ms</th>
       <th>acousticness</th>
-      <th>...</th>
+      <th>danceability</th>
       <th>energy</th>
       <th>instrumentalness</th>
       <th>liveness</th>
@@ -2889,7 +2862,6 @@ highValenceTracks.head()
     <tr>
       <th>1006</th>
       <td>7</td>
-      <td>7</td>
       <td>There's Nothing Holdin' Me Back</td>
       <td>Shawn Mendes</td>
       <td>3093935.0</td>
@@ -2898,7 +2870,7 @@ highValenceTracks.head()
       <td>7JJmb5XwzOO8jgpou264Ml</td>
       <td>199440.0</td>
       <td>0.380</td>
-      <td>...</td>
+      <td>0.866</td>
       <td>0.813</td>
       <td>0.000000</td>
       <td>0.0779</td>
@@ -2913,7 +2885,6 @@ highValenceTracks.head()
     <tr>
       <th>124</th>
       <td>125</td>
-      <td>125</td>
       <td>Pumped Up Kicks</td>
       <td>Foster The People</td>
       <td>467384.0</td>
@@ -2922,7 +2893,7 @@ highValenceTracks.head()
       <td>7w87IxuO7BDcJ3YUqCyMTT</td>
       <td>239600.0</td>
       <td>0.145</td>
-      <td>...</td>
+      <td>0.733</td>
       <td>0.710</td>
       <td>0.115000</td>
       <td>0.0956</td>
@@ -2937,7 +2908,6 @@ highValenceTracks.head()
     <tr>
       <th>2366</th>
       <td>167</td>
-      <td>167</td>
       <td>Feliz Navidad</td>
       <td>José Feliciano</td>
       <td>631358.0</td>
@@ -2946,7 +2916,7 @@ highValenceTracks.head()
       <td>0oPdaY4dXtc3ZsaG17V972</td>
       <td>182067.0</td>
       <td>0.550</td>
-      <td>...</td>
+      <td>0.513</td>
       <td>0.831</td>
       <td>0.000000</td>
       <td>0.3360</td>
@@ -2961,7 +2931,6 @@ highValenceTracks.head()
     <tr>
       <th>130</th>
       <td>131</td>
-      <td>131</td>
       <td>Happy - From "Despicable Me 2"</td>
       <td>Pharrell Williams</td>
       <td>453426.0</td>
@@ -2970,7 +2939,7 @@ highValenceTracks.head()
       <td>60nZcImufyMA1MKQY3dcCH</td>
       <td>232720.0</td>
       <td>0.219</td>
-      <td>...</td>
+      <td>0.647</td>
       <td>0.822</td>
       <td>0.000000</td>
       <td>0.0908</td>
@@ -2985,7 +2954,6 @@ highValenceTracks.head()
     <tr>
       <th>1315</th>
       <td>116</td>
-      <td>116</td>
       <td>Skrt On Me (feat. Nicki Minaj)</td>
       <td>Calvin Harris</td>
       <td>625504.0</td>
@@ -2994,7 +2962,7 @@ highValenceTracks.head()
       <td>7iDxZ5Cd0Yg08d4fI5WVtG</td>
       <td>228267.0</td>
       <td>0.169</td>
-      <td>...</td>
+      <td>0.713</td>
       <td>0.889</td>
       <td>0.000058</td>
       <td>0.1690</td>
@@ -3008,7 +2976,6 @@ highValenceTracks.head()
     </tr>
   </tbody>
 </table>
-<p>5 rows × 21 columns</p>
 </div>
 
 
@@ -3032,7 +2999,7 @@ plt.ylabel("Streams in Millions")
 
 
     
-![svg](output_69_1.svg)
+![svg](output_76_1.svg)
     
 
 
@@ -3066,13 +3033,13 @@ plt.legend(['Song with valence < .3', 'Song with valence < .5 and > .3', 'Song w
 
 
 
-    <matplotlib.legend.Legend at 0x2150b8ccf40>
+    <matplotlib.legend.Legend at 0x23bd47c7340>
 
 
 
 
     
-![svg](output_74_1.svg)
+![svg](output_81_1.svg)
     
 
 
@@ -3096,13 +3063,13 @@ plt.legend(['Song with valence < .3', 'Song with valence < .5 and > .3', 'Song w
 
 
 
-    <matplotlib.legend.Legend at 0x2150b93ad00>
+    <matplotlib.legend.Legend at 0x23bd4839e50>
 
 
 
 
     
-![svg](output_77_1.svg)
+![svg](output_84_1.svg)
     
 
 
@@ -3126,13 +3093,13 @@ plt.legend(['Song with valence < .3', 'Song with valence < .5 and > .3', 'Song w
 
 
 
-    <matplotlib.legend.Legend at 0x2150b9b7ac0>
+    <matplotlib.legend.Legend at 0x23bd48b6c10>
 
 
 
 
     
-![svg](output_80_1.svg)
+![svg](output_87_1.svg)
     
 
 
@@ -3146,10 +3113,12 @@ In the final step of the data cycle, we draw conclusions based off our analysis 
 
 To answer our hypothesis: *Are there traits of a song that can be used to determine future success? If so, what are they?* 
 
-Yes, there are traits of songs when given specific bounds of values mimic those in the Top 200 and even the Top 10. We predict that if a song was released with these given bounds, it is likely to be succesful.
+We were unable to conclude if there were specific traits of a song that directly determined future success or high stream counts. However, there were a few noteworthy trends in our data. Among our findings, we saw the volumes of songs across our dataset are normally distributed, with a mean of -6 decibels and a standard deviation of about 3 decibels. We can safely say that the majority of songs on the top 200 chart across our data maintain this volume because the data is normally distributed. The loudness of songs brings up an interesting reminder of the [Loudness War](https://en.wikipedia.org/wiki/Loudness_war) in the early 1940s. During the loudness war, even though increasing the loudness of a song ultimately reduced its fidelity (fine details), critics preferred the increasing levels. This may be an echo of the impacts of this cultural trend, or perhaps people simply like their music loud, even if at a lower quality. 
 
-From our data visualization conclusions, especially our correlation matrix, it is shown that success (stream count) of a song has a positive and sometimes strong positive correlation with popularity, number of followers, loudness, valence, energy, and accousticness. When obeserving the Top 200, note that the while these correlations are merely postive, when observing the top 10, they are much more strongly positvely correlated. Liveness, tempo, and instrumentalness of have negative to strong negative correlation with success. 
+Our initial plotting of popularity index against streams indicated that most top 200 songs came from artists with an index of around 80 (mean of 81), and our correlation plot seemed to support that higher artist popularity indices were positively correlated with streams. It is unsurprising that artist popularity has a correlation with streams, but what is noteworthy is that our correlation plot seemed to indicate that even artist popularity alone had a weak positive correlation with streams. We noted that while the average number of followers for an artist was skewed by inconsistently high values in the top 1 or 2 positions, the median value of followers for an artist in the top 200 was 7,748,023.
 
-It is interesting to note that the popularity of an artist had a weak correlation with success.
+After analyzing several features individually and seeing little direct correlation with stream values, we decided to consider how different factors working together might impact streams. We looked at individual features within the top 10 positions of our charts to see if we could find any trends here, as these songs were the most succesful of all the songs on our data. Within these, we initially thought we saw a positive correlation between valence and stream counts, but it was unclear if there was a distinctive relationship. We tried to plot a couple other features with bounded valence values to try to investigate whether any of these combinations could produce a more clear correlation. The other features we chose to measure with bounded valence values were ones which appeared to be positively correlated with streams according to our correlation chart, but were also measured independently from valence (i.e. they were not determined using the same song characteristics). Unfortunately, it appeared that there was no correlation between the combination of valence with the other factors we considered (danceability, popularity, and volume) and streams.
 
-The loudness of songs brings up an interesting reminder of the [Loudness War](https://en.wikipedia.org/wiki/Loudness_war) in the early 1940s. During the loudness war, even though increasing the loudness of a song ultimately reduced its fidelity (fine details), critics preferred the increasing levels. This may be an echo of the impacts of this cultural trend, or perhaps people simply like their music loud, even if at a lower quality.
+No single feature appeared to be the determining factor for a song's success. Perhaps future research on how combinations of different features affect streams would be valuable, as our correlation plot seemed to indicate our conclusion. It would also be worth looking into what factors influence artist popularity. Access to data from a larger time period could also help in finding interesting trends in how people listen to music over time, too. 
+
+
